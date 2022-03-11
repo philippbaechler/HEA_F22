@@ -134,6 +134,18 @@ def get_stress_values(driver):
         return pd.NA, pd.NA, pd.NA, pd.NA, pd.NA
 
 
+def get_body_battery_high_and_low(driver):
+    try:
+        element = driver.find_element(By.XPATH,u"//h2[contains(@class, 'BodyBatteryPieChart')]")
+        high_value = element.text
+        element = driver.find_element(By.XPATH,u"//h4[contains(@class, 'BodyBatteryPieChart')]")
+        low_value = element.text
+        return high_value, low_value
+    except:
+        return pd.NA, pd.NA
+
+
+
 #%%
 start_date = datetime.date(2021, 7, 1)
 end_date = datetime.date(2021, 7, 3)
@@ -157,7 +169,7 @@ while start_date <= end_date:
     low_intensity_min, high_intensity_min = get_intensity_minutes(driver)
     total_steps = get_steps(driver)
     stress_val, pause_min, low_stress_min, medium_stress_min, high_stress_min = get_stress_values(driver)
-
+    body_bat_high, body_bat_low = get_body_battery_high_and_low(driver)
 
     data.append({"date": start_date, "rhr": rhr, "vo2_max": vo2_max, \
         "training_load": training_load,  "cal_rest": cal_rest, "cal_activ": cal_activ, \
@@ -165,9 +177,11 @@ while start_date <= end_date:
         "rem_sleep": rem_sleep, "awake_sleep": awake_sleep, "low_intensity_min": low_intensity_min, \
         "high_intensity_min": high_intensity_min, "total_steps": total_steps, \
         "stress_val": stress_val, "pause_min": pause_min, "low_stress_min": low_stress_min, \
-        "medium_stress_min": medium_stress_min, "high_stress_min": high_stress_min})
+        "medium_stress_min": medium_stress_min, "high_stress_min": high_stress_min, \
+        "body_bat_high": body_bat_high, "body_bat_low": body_bat_low})
 
     start_date += delta
+
 
 df = pd.DataFrame(data)
 print(df.head())
