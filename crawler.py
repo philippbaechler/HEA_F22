@@ -1,10 +1,4 @@
 #%%
-# pip install selenium
-# sudo apt install chromium-chromedriver
-
-import imp
-import sys
-from numpy import empty
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver import FirefoxOptions
