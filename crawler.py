@@ -112,6 +112,13 @@ def get_intensity_minutes(driver):
         return pd.NA, pd.NA
 
 
+def get_steps(driver):
+    try:
+        element = driver.find_element(By.XPATH,u"//div[contains(@class, 'StepsCard')]")
+        return re.findall(r'([0-9]+,?[0-9]+)Distanz\s', element.text.replace("\n", ""))[0]
+    except:
+        return pd.NA
+
 
 #%%
 start_date = datetime.date(2021, 7, 1)
@@ -134,12 +141,13 @@ while start_date <= end_date:
     cal_rest, cal_activ = get_calories(driver)
     total_sleep, deep_sleep, light_sleep, rem_sleep, awake_sleep = get_sleep_data(driver)
     low_intensity_min, high_intensity_min = get_intensity_minutes(driver)
+    total_steps = get_steps(driver)
 
     data.append({"date": start_date, "rhr": rhr, "vo2_max": vo2_max, \
         "training_load": training_load,  "cal_rest": cal_rest, "cal_activ": cal_activ, \
         "total_sleep": total_sleep, "deep_sleep": deep_sleep, "light_sleep": light_sleep, \
         "rem_sleep": rem_sleep, "awake_sleep": awake_sleep, "low_intensity_min": low_intensity_min, \
-        "high_intensity_min": high_intensity_min})
+        "high_intensity_min": high_intensity_min, "total_steps": total_steps})
 
     start_date += delta
 
