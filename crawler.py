@@ -154,10 +154,21 @@ def get_SpO2_and_avg_hr(driver):
         return pd.NA, pd.NA, pd.NA
 
 
+def get_bed_and_wakeup_times(driver):
+    try:
+        element = driver.find_element(By.XPATH,u"//div[contains(@class, 'sleepTimeEditor')]")
+        bed_time = re.findall(r'(.*)Schlafenszeit', element.text.replace("\n", ""))[0]
+        element = driver.find_element(By.XPATH,u"//div[contains(@class, 'wakeTimeEditor')]")
+        wake_time = re.findall(r'(.*)Aufstehzeit', element.text.replace("\n", ""))[0]
+        return bed_time, wake_time
+    except:
+        return pd.NA, pd.NA
+
+
 
 #%%
-start_date = datetime.date(2021, 7, 1)
-end_date = datetime.date(2021, 7, 3)
+start_date = datetime.date(2021, 7, 10)
+end_date = datetime.date(2021, 7, 12)
 delta = datetime.timedelta(days=1)
 
 data = []
@@ -177,13 +188,16 @@ while start_date <= end_date:
     total_steps = get_steps(driver)
     stress_val, pause_min, low_stress_min, medium_stress_min, high_stress_min = get_stress_values(driver)
     body_bat_high, body_bat_low = get_body_battery_high_and_low(driver)
+    spo2_avg, spo2_min, avg_hr_sleep = pd.NA, pd.NA, pd.NA
+    bed_time, wake_time = pd.NA, pd.NA
 
-    driver.get("https://connect.garmin.com/modern/sleep/" + str(start_date) + "/pulseOx")
-    wait = WebDriverWait(driver, 10)
-    wait.until(EC.element_to_be_clickable((By.XPATH, u"//button[contains(@class, 'PillGroup')]"))) #Menu_StandardMenuBtn
+    if not pd.isna(total_sleep):
+        driver.get("https://connect.garmin.com/modern/sleep/" + str(start_date) + "/pulseOx")
+        wait = WebDriverWait(driver, 10)
+        wait.until(EC.element_to_be_clickable((By.XPATH, u"//button[contains(@class, 'PillGroup')]"))) #Menu_StandardMenuBtn
 
-    spo2_avg, spo2_min, avg_hr_sleep = get_SpO2_and_avg_hr(driver)
-
+        spo2_avg, spo2_min, avg_hr_sleep = get_SpO2_and_avg_hr(driver)
+        bed_time, wake_time = get_bed_and_wakeup_times(driver)
 
     data.append({"date": start_date, "rhr": rhr, "vo2_max": vo2_max, \
         "training_load": training_load,  "cal_rest": cal_rest, "cal_activ": cal_activ, \
@@ -193,7 +207,8 @@ while start_date <= end_date:
         "stress_val": stress_val, "pause_min": pause_min, "low_stress_min": low_stress_min, \
         "medium_stress_min": medium_stress_min, "high_stress_min": high_stress_min, \
         "body_bat_high": body_bat_high, "body_bat_low": body_bat_low, "spo2_avg": spo2_avg, \
-        "spo2_min": spo2_min, "avg_hr_sleep": avg_hr_sleep})
+        "spo2_min": spo2_min, "avg_hr_sleep": avg_hr_sleep, "bed_time": bed_time, \
+        "wake_time": wake_time})
 
     start_date += delta
 
