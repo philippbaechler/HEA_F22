@@ -120,6 +120,20 @@ def get_steps(driver):
         return pd.NA
 
 
+def get_stress_values(driver):
+    try:
+        element = driver.find_element(By.XPATH,u"//div[contains(@class, 'StressCard')]")
+        stress_values = re.findall(r'([0-9]+)Pause\s(.*)Niedrig\s(.*)Mittel\s(.*)Hoch\s(.*)$', element.text.replace("\n", ""))[0]
+        stress_summary = int(stress_values[0])
+        pause_time_min = convert_to_minutes(stress_values[1])
+        low_stress_time_min = convert_to_minutes(stress_values[2])
+        medium_stress_time_min = convert_to_minutes(stress_values[3])
+        high_stress_time_min = convert_to_minutes(stress_values[4])
+        return stress_summary, pause_time_min, low_stress_time_min, medium_stress_time_min, high_stress_time_min
+    except:
+        return pd.NA, pd.NA, pd.NA, pd.NA, pd.NA
+
+
 #%%
 start_date = datetime.date(2021, 7, 1)
 end_date = datetime.date(2021, 7, 3)
@@ -142,12 +156,16 @@ while start_date <= end_date:
     total_sleep, deep_sleep, light_sleep, rem_sleep, awake_sleep = get_sleep_data(driver)
     low_intensity_min, high_intensity_min = get_intensity_minutes(driver)
     total_steps = get_steps(driver)
+    stress_val, pause_min, low_stress_min, medium_stress_min, high_stress_min = get_stress_values(driver)
+
 
     data.append({"date": start_date, "rhr": rhr, "vo2_max": vo2_max, \
         "training_load": training_load,  "cal_rest": cal_rest, "cal_activ": cal_activ, \
         "total_sleep": total_sleep, "deep_sleep": deep_sleep, "light_sleep": light_sleep, \
         "rem_sleep": rem_sleep, "awake_sleep": awake_sleep, "low_intensity_min": low_intensity_min, \
-        "high_intensity_min": high_intensity_min, "total_steps": total_steps})
+        "high_intensity_min": high_intensity_min, "total_steps": total_steps, \
+        "stress_val": stress_val, "pause_min": pause_min, "low_stress_min": low_stress_min, \
+        "medium_stress_min": medium_stress_min, "high_stress_min": high_stress_min})
 
     start_date += delta
 
