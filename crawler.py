@@ -145,6 +145,15 @@ def get_body_battery_high_and_low(driver):
         return pd.NA, pd.NA
 
 
+def get_SpO2_and_avg_hr(driver):
+    try:
+        element = driver.find_element(By.XPATH,u"//div[contains(@class, 'SleepPulseOx')]")
+        SpO2_values = re.findall(r'([0-9]+)%Durchschnittlicher SpO₂([0-9]+)%Niedrigster\sSpO2([0-9]+)\sbpm', element.text.replace("\n", ""))[0]
+        return SpO2_values
+    except:
+        return pd.NA, pd.NA, pd.NA
+
+
 
 #%%
 start_date = datetime.date(2021, 7, 1)
@@ -155,10 +164,8 @@ data = []
 
 while start_date <= end_date:
     print(start_date)
+
     driver.get("https://connect.garmin.com/modern/daily-summary/" + str(start_date))
-
-    # print(driver.execute_script('return document.readyState;'), end=" ")
-
     wait = WebDriverWait(driver, 10)
     wait.until(EC.element_to_be_clickable((By.XPATH, u"//button[contains(@class, 'MenuBtn')]"))) #Menu_StandardMenuBtn
 
@@ -171,6 +178,13 @@ while start_date <= end_date:
     stress_val, pause_min, low_stress_min, medium_stress_min, high_stress_min = get_stress_values(driver)
     body_bat_high, body_bat_low = get_body_battery_high_and_low(driver)
 
+    driver.get("https://connect.garmin.com/modern/sleep/" + str(start_date) + "/pulseOx")
+    wait = WebDriverWait(driver, 10)
+    wait.until(EC.element_to_be_clickable((By.XPATH, u"//button[contains(@class, 'PillGroup')]"))) #Menu_StandardMenuBtn
+
+    spo2_avg, spo2_min, avg_hr_sleep = get_SpO2_and_avg_hr(driver)
+
+
     data.append({"date": start_date, "rhr": rhr, "vo2_max": vo2_max, \
         "training_load": training_load,  "cal_rest": cal_rest, "cal_activ": cal_activ, \
         "total_sleep": total_sleep, "deep_sleep": deep_sleep, "light_sleep": light_sleep, \
@@ -178,7 +192,8 @@ while start_date <= end_date:
         "high_intensity_min": high_intensity_min, "total_steps": total_steps, \
         "stress_val": stress_val, "pause_min": pause_min, "low_stress_min": low_stress_min, \
         "medium_stress_min": medium_stress_min, "high_stress_min": high_stress_min, \
-        "body_bat_high": body_bat_high, "body_bat_low": body_bat_low})
+        "body_bat_high": body_bat_high, "body_bat_low": body_bat_low, "spo2_avg": spo2_avg, \
+        "spo2_min": spo2_min, "avg_hr_sleep": avg_hr_sleep})
 
     start_date += delta
 
