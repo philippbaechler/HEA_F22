@@ -20,7 +20,6 @@ opts = webdriver.ChromeOptions()
 # opts.add_argument('--headless')
 
 #%%
-
 def log_in():
     driver = webdriver.Chrome(options=opts)
 
@@ -38,16 +37,9 @@ def log_in():
     element = driver.find_element(By.ID, "login-btn-signin")
     element.send_keys(Keys.RETURN)
 
-    # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME("header-nav-link"))))
-    # wait.until(EC.presence_of_element_located((By.CLASS_NAME, "header-nav-link")))
-
     return driver
 
-#%%
-driver = log_in()
-time.sleep(5)
 
-#%%
 def get_resting_heart_rate_bpm(driver):
     try:
         element = driver.find_element(By.XPATH,u"//div[contains(@class, 'HeartRateCardMain_wrapper')]")
@@ -167,8 +159,13 @@ def get_bed_and_wakeup_times(driver):
 
 
 #%%
-start_date = datetime.date(2021, 7, 10)
-end_date = datetime.date(2021, 7, 12)
+driver = log_in()
+time.sleep(5)
+
+
+#%%
+start_date = datetime.date(2022, 1, 1)
+end_date = datetime.date(2022, 2, 28)
 delta = datetime.timedelta(days=1)
 
 data = []
@@ -217,13 +214,10 @@ df = pd.DataFrame(data)
 print(df.head())
 
 #%%
-df.to_csv("garmin_data.csv")
-
-
-
-
-
+df.to_csv("garmin_data_1-Jan-22_28-Feb-22.csv")
 
 
 #%%
 driver.close()
+
+# %%
