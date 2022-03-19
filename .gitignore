@@ -133,7 +133,6 @@ dmypy.json
 garmin/credentials.py
 
 # input / output files
-apple/input/*
-apple/output/*
-garmin/output/*
+apple/data/*
+garmin/data/*
 

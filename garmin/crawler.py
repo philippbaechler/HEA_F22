@@ -214,7 +214,7 @@ df = pd.DataFrame(data)
 print(df.head())
 
 #%%
-df.to_csv("garmin_data_1-Jan-22_28-Feb-22.csv")
+df.to_csv("output/garmin_data_1-Jan-22_28-Feb-22.csv")
 
 
 #%%

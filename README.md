@@ -4,10 +4,20 @@ Folder structure should look like:
 
         HEA_F22/
             apple/
-                input/
-                output/
+                apple_health_extractor.ipynb
+                data/
+                    ActiveEnergyBurned.csv
+                    ActivitySummary.csv
+                    AppleExerciseTime.csv
+                    ...
             garmin/
-                output/
+                crawler.py
+                credentials.py
+                data/
+                    garmin_data_1-Apr-21_30-Jun-21.csv
+                    garmin_data_1-Jan-21_31-Mar-21.csv
+                    garmin_data_1-Jan-22_28-Feb-22.csv
+                    ...
 
 ---
 
