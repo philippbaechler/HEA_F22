@@ -128,5 +128,12 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+
 # specific files
-credentials.py
+garmin/credentials.py
+
+# input / output files
+apple/input/
+apple/output/
+garmin/output/
+
