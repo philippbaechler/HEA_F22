@@ -1,17 +1,35 @@
 # HEA_F22
 
+Folder structure should look like:
 
-Rrequired Tools:
-----------------
+        HEA_F22/
+            apple/
+                input/
+                output/
+            garmin/
+                output/
+
+---
+
+## Apple Sport Watch
+
+
+
+---
+
+## Garmin Sport Watch
+
+
+
+
+### Rrequired Tools:
 
 1. pip install pandas 
 2. pip install selenium
 3. sudo apt install chromium-chromedriver
 
----
 
-Usage:
-------
+### Usage:
 
 1. Add a credentials.py with your garmin login.
 
@@ -20,9 +38,3 @@ Usage:
 
 2. ...
 
----
-
--- Testing
-
---- Testing 2
----
