@@ -31,19 +31,35 @@ steps = convert_to_date_time_append_to_df(steps, "startDate")
 steps.sample(5)
 # %%
 steps_by_date = steps.groupby(["date"])["value"].sum().reset_index(name="Steps")
-steps_by_date.head()
+print(steps_by_date.head())
+print(steps_by_date.shape)
 
 
-# %% rhr
+# %% restingHR
 restingHR = pd.read_csv("data/RestingHeartRate.csv")
 restingHR = convert_to_date_time_append_to_df(restingHR, "startDate")
 restingHR.sample(5)
+# %%
+# find double values
+print("Unique Dates:", len(restingHR["date"].unique()))
+print("Number of entries:", restingHR.shape[0])
+restingHR.groupby(["date"]).count().sort_values(by="startDate")
+# %%
+# replace with mean of the day
+restingHR_by_day = restingHR.groupby(["date"])["value"].mean().reset_index(name="Steps")
+print(restingHR_by_day.head())
+print(restingHR_by_day.shape)
 
 
 # %% vo2max
 vo2max = pd.read_csv("data/VO2Max.csv")
 vo2max = convert_to_date_time_append_to_df(vo2max, "startDate")
 vo2max.sample(5)
+# %% 
+# replace with mean
+vo2max_by_day = vo2max.groupby(["date"])["value"].mean().reset_index(name="Steps")
+print(vo2max_by_day.head())
+print(vo2max_by_day.shape)
 
 
 # %% sleep
@@ -52,4 +68,6 @@ sleep = convert_to_date_time_append_to_df(sleep, "startDate")
 sleep.sample(5)
 
 
+# %%
+sleep.groupby(["sourceName"]).unique()
 # %%
