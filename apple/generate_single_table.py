@@ -2,6 +2,7 @@
 import pandas as pd
 import pytz
 from datetime import datetime
+from matplotlib import pyplot as plt
 
 # %%
 convert_tz = lambda x: x.to_pydatetime().replace(tzinfo=pytz.utc).astimezone(pytz.timezone('Europe/Zurich'))
@@ -74,9 +75,9 @@ sleep.sample(5)
 # %% how many of each data source?
 sleep.groupby(["sourceName"]).count()
 # %% -> only use data from the Apple Watch
-# pay attention to the special character between Apple and Watch (U+00a0)  -> maybe use AutoSleep
-sleep_data = sleep.loc[sleep["sourceName"]=="Apple Watch von Laura"]
-#sleep_data = sleep.loc[sleep["value"]=="HKCategoryValueSleepAnalysisAsleep"]
+# pay attention to the special character between Apple and Watch (U+00a0)  -> maybe use AutoSleep / Apple Watch von Laura
+sleep_data = sleep.loc[sleep["sourceName"]=="AutoSleep"]
+sleep_data = sleep_data.loc[sleep_data["value"]=="HKCategoryValueSleepAnalysisAsleep"]
 sleep_data['time_asleep'] = sleep_data['endDate'] - sleep_data['startDate']
 sleep_data.head()
 #%%
@@ -84,15 +85,14 @@ sleep_data = sleep_data.groupby('creationDate').agg(total_time_asleep=('time_asl
     bed_time=('startDate', 'min'), 
     awake_time=('endDate', 'max'), 
     sleep_counts=('creationDate','count'))
-
 # %%
 sleep_data['time_in_bed'] = sleep_data['awake_time'] - sleep_data['bed_time']
 sleep_data['restless_time'] = sleep_data['time_in_bed'] - sleep_data['total_time_asleep']
 sleep_data = sleep_data.reset_index()
 sleep_data.head()
-# %%
-from matplotlib import pyplot as plt
-plt.plot(sleep_data["total_time_asleep"].dt.total_seconds()/60)
-
-
+# %% plot
+sleep_data['time_in_bed'] = (sleep_data['time_in_bed'].dt.total_seconds()/60)
+sleep_data['total_time_asleep'] = (sleep_data['total_time_asleep'].dt.total_seconds()/60)
+sleep_data[['time_in_bed','total_time_asleep']].plot(use_index=True)
+plt.show()
 # %%
