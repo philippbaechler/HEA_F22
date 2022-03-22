@@ -1,7 +1,7 @@
 # %%
 import pandas as pd
 import pytz
-
+from datetime import datetime
 
 # %%
 convert_tz = lambda x: x.to_pydatetime().replace(tzinfo=pytz.utc).astimezone(pytz.timezone('Europe/Zurich'))
@@ -16,13 +16,15 @@ get_day_of_week = lambda x: convert_tz(x).weekday()
 # %%
 def convert_to_date_time_append_to_df(df, field):
     df[field] = pd.to_datetime(df[field])
-    df['year'] = df[field].map(get_year)
-    df['month'] = df[field].map(get_month)
+    # df['year'] = df[field].map(get_year)
+    # df['month'] = df[field].map(get_month)
     df['date'] = df[field].map(get_date)
-    df['day'] = df[field].map(get_day)
-    df['hour'] = df[field].map(get_hour)
-    df['dow'] = df[field].map(get_day_of_week)
+    # df['day'] = df[field].map(get_day)
+    # df['hour'] = df[field].map(get_hour)
+    # df['dow'] = df[field].map(get_day_of_week)
     return df
+
+
 
 
 # %% steps
@@ -64,10 +66,33 @@ print(vo2max_by_day.shape)
 
 # %% sleep
 sleep = pd.read_csv("data/SleepAnalysis.csv")
-sleep = convert_to_date_time_append_to_df(sleep, "startDate")
+sleep["startDate"] = pd.to_datetime(sleep["startDate"])
+sleep["endDate"] = pd.to_datetime(sleep["endDate"])
+sleep["creationDate"] = pd.to_datetime(sleep["creationDate"])
+sleep["date"] = sleep["startDate"].map(get_date)
 sleep.sample(5)
-
+# %% how many of each data source?
+sleep.groupby(["sourceName"]).count()
+# %% -> only use data from the Apple Watch
+# pay attention to the special character between Apple and Watch (U+00a0)  -> maybe use AutoSleep
+sleep_data = sleep.loc[sleep["sourceName"]=="Apple Watch von Laura"]
+#sleep_data = sleep.loc[sleep["value"]=="HKCategoryValueSleepAnalysisAsleep"]
+sleep_data['time_asleep'] = sleep_data['endDate'] - sleep_data['startDate']
+sleep_data.head()
+#%%
+sleep_data = sleep_data.groupby('creationDate').agg(total_time_asleep=('time_asleep', 'sum'),
+    bed_time=('startDate', 'min'), 
+    awake_time=('endDate', 'max'), 
+    sleep_counts=('creationDate','count'))
 
 # %%
-sleep.groupby(["sourceName"]).unique()
+sleep_data['time_in_bed'] = sleep_data['awake_time'] - sleep_data['bed_time']
+sleep_data['restless_time'] = sleep_data['time_in_bed'] - sleep_data['total_time_asleep']
+sleep_data = sleep_data.reset_index()
+sleep_data.head()
+# %%
+from matplotlib import pyplot as plt
+plt.plot(sleep_data["total_time_asleep"].dt.total_seconds()/60)
+
+
 # %%
