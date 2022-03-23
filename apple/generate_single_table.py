@@ -18,14 +18,22 @@ get_day_of_week = lambda x: convert_tz(x).weekday()
 # %%
 def convert_to_date_time_append_to_df(df, field):
     df[field] = pd.to_datetime(df[field])
-    # df['year'] = df[field].map(get_year)
-    # df['month'] = df[field].map(get_month)
+    df['year'] = df[field].map(get_year)
+    df['month'] = df[field].map(get_month)
     df['date'] = df[field].map(get_date)
-    # df['day'] = df[field].map(get_day)
-    # df['hour'] = df[field].map(get_hour)
-    # df['dow'] = df[field].map(get_day_of_week)
+    df['day'] = df[field].map(get_day)
+    df['hour'] = df[field].map(get_hour)
+    df['dow'] = df[field].map(get_day_of_week)
     return df
 
+
+def convert_to_date_time_append_to_df(df):
+    df["creationDate"] = pd.to_datetime(df["creationDate"])
+    df["startDate"] = pd.to_datetime(df["startDate"])
+    df["endDate"] = pd.to_datetime(df["endDate"])
+    df["start_date"] = df["startDate"].map(get_date)
+    df["creation_date"] = df["startDate"].map(get_date)
+    return df
 
 # %% steps
 steps = pd.read_csv("data/StepCount.csv")
@@ -114,4 +122,20 @@ basalEnergy_by_date = basalEnergy.groupby(["date"])["value"].sum().reset_index(n
 basalEnergy_by_date.head()
 
 
+# %% active calories burned
+respiratoryRate = pd.read_csv("data/RespiratoryRate.csv")
+respiratoryRate = convert_to_date_time_append_to_df(respiratoryRate)
+respiratoryRate.sample(5)
 # %%
+respiratoryRate_by_date = respiratoryRate.groupby("creation_date").agg(
+    respiratoryRate_mean=("value", "mean"),
+    respiratoryRate_max=("value", "max"),
+    respiratoryRate_min=("value", "min")
+).reset_index()
+
+respiratoryRate_by_date.head()
+# %%
+respiratoryRate_by_date.set_index("creation_date")[["respiratoryRate_mean", "respiratoryRate_max", "respiratoryRate_min"]].plot()
+# %%
+
+
