@@ -105,5 +105,13 @@ activeEnergy.sample(5)
 activeEnergy_by_date = activeEnergy.groupby(["date"])["value"].sum().reset_index(name="activeEnergy")
 activeEnergy_by_date.head()
 
+# %% basal calories burned
+basalEnergy = pd.read_csv("data/BasalEnergyBurned.csv")
+basalEnergy = convert_to_date_time_append_to_df(basalEnergy, "startDate")
+basalEnergy.sample(5)
+# %%
+basalEnergy_by_date = basalEnergy.groupby(["date"])["value"].sum().reset_index(name="basalEnergy")
+basalEnergy_by_date.head()
+
 
 # %%
