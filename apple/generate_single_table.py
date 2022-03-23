@@ -137,6 +137,20 @@ print(respiratoryRate_by_date.shape)
 respiratoryRate_by_date.set_index("date")[["respiratoryRate_mean", "respiratoryRate_max", "respiratoryRate_min"]].plot()
 
 
+# %% handwashing
+handwashingEvent = pd.read_csv("data/HandwashingEvent.csv")
+handwashingEvent = convert_to_date_time_append_to_df(handwashingEvent).drop_duplicates()
+handwashingEvent["totalWashingTime"] = handwashingEvent["endDateTime"] - handwashingEvent["startDateTime"]
+handwashingEvent.head(20)
+# %%
+handwashingEvent_by_day = handwashingEvent.groupby(["start_date"]).agg(
+    handWashing_count=("totalWashingTime", "count"),
+    handWashing_time=("totalWashingTime", "sum")
+).reset_index()
+handwashingEvent_by_day = handwashingEvent_by_day.rename(columns={"start_date": "date"})
+handwashingEvent_by_day
+
+
 # %%
 df = pd.merge(steps_by_date, restingHR_by_day, on="date", how="outer")
 df = pd.merge(df, vo2max_by_day, on="date", how="outer")
@@ -144,6 +158,7 @@ df = pd.merge(df, sleep_data_by_day, on="date", how="outer")
 df = pd.merge(df, activeEnergy_by_date, on="date", how="outer")
 df = pd.merge(df, basalEnergy_by_date, on="date", how="outer")
 df = pd.merge(df, respiratoryRate_by_date, on="date", how="outer")
+df = pd.merge(df, handwashingEvent_by_day, on="date", how="outer")
 df.head(10)
 
 
