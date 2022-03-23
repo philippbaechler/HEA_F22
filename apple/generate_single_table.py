@@ -1,4 +1,5 @@
 # %%
+from operator import index
 import pandas as pd
 import pytz
 from datetime import datetime
@@ -24,8 +25,6 @@ def convert_to_date_time_append_to_df(df, field):
     # df['hour'] = df[field].map(get_hour)
     # df['dow'] = df[field].map(get_day_of_week)
     return df
-
-
 
 
 # %% steps
@@ -89,10 +88,22 @@ sleep_data = sleep_data.groupby('creationDate').agg(total_time_asleep=('time_asl
 sleep_data['time_in_bed'] = sleep_data['awake_time'] - sleep_data['bed_time']
 sleep_data['restless_time'] = sleep_data['time_in_bed'] - sleep_data['total_time_asleep']
 sleep_data = sleep_data.reset_index()
+sleep_data["date"] = sleep_data["creationDate"].map(get_date)
 sleep_data.head()
 # %% plot
 sleep_data['time_in_bed'] = (sleep_data['time_in_bed'].dt.total_seconds()/60)
 sleep_data['total_time_asleep'] = (sleep_data['total_time_asleep'].dt.total_seconds()/60)
 sleep_data[['time_in_bed','total_time_asleep']].plot(use_index=True)
 plt.show()
+
+
+# %% active calories burned
+activeEnergy = pd.read_csv("data/ActiveEnergyBurned.csv")
+activeEnergy = convert_to_date_time_append_to_df(activeEnergy, "startDate")
+activeEnergy.sample(5)
+# %%
+activeEnergy_by_date = activeEnergy.groupby(["date"])["value"].sum().reset_index(name="activeEnergy")
+activeEnergy_by_date.head()
+
+
 # %%
