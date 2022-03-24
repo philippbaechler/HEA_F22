@@ -136,3 +136,4 @@ garmin/credentials.py
 apple/data/*
 garmin/data/*
 
+.DS_Store
