@@ -80,13 +80,13 @@ HEA_F22/
 | body_battery_low | % | **Body Battery Low** is the lowest value which the person reachde during the day. Depending on the quality of sleep the battery should recharge. If you calculate the difference between the lowest and highest value (before the night and after the night) you'll get an indicator for how good the sleep was. | garmin |
 | oxygen_saturation_avg | % | **Average Oxygen Saturation** during the night. | garmin |
 | oxygen_saturation_minimum | % | **Minimal Oxygen Saturation** during the night. A low value could be an indicator for haveing a snoring problem. This might lead to an oxygen undersupply and in the long therm damaging the brain and other organs. | garmin |
-| avg_hr_sleep | 1/min | **Average Heart Rate** during the sleep. A lower value might be an indicator for a good sleep. | garmin & "apple" |
+| avg_hr_sleep | 1/min | **Average Heart Rate** during the sleep. A lower value might be an indicator for a good sleep. | garmin |
 | bed_time | time | **Time Point** when the person goes to bed. Regularity in the sleeping behaviour might have a big impact to the quality of the sleep. | garmin & apple |
 | wake_up_time | time | **Time Point** when the person get up in the morning. | garmin & apple |
 | sleep_counter | - | **Sleep Counter** - the apple watch recognizes when the person has a restless time during sleep. The sleep during a night is divided through these restless events. The counter simply counts how many times the person had a restless time. A high number can be associated with a low sleep quality. | apple |
 | respiratory_rate_avg | 1/min | Average **Respiration Rate** during sleep. A lower value might be an indicator of a high quality sleep | apple |
 | respiratory_rate_max | 1/min | Maximal **Respiration Rate** during sleep. | apple |
-| respiratory_rate_min | 1/min | Minimal **Respiration Rate** during sleep. | apple |
+| respiratory_rate_minimum | 1/min | Minimal **Respiration Rate** during sleep. | apple |
 | hand_washing_counter | - | **Hand Washing Counter** counts the times of hand washing events. | apple |
 | hand_washing_time_sec | sec | **Hand Washing Time** summs up the time spent with washing hands. | apple |
 

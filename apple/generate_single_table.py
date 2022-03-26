@@ -1,6 +1,7 @@
 # %%
 from operator import index
 import pandas as pd
+import numpy as np
 import pytz
 from datetime import datetime
 from matplotlib import pyplot as plt
@@ -80,7 +81,8 @@ sleep_data = sleep_data.loc[sleep_data["value"]=="HKCategoryValueSleepAnalysisAs
 sleep_data['time_asleep'] = sleep_data['endDateTime'] - sleep_data['startDateTime']
 sleep_data.head()
 #%%
-sleep_data_by_day = sleep_data.groupby('creationDateTime').agg(total_sleep_min=('time_asleep', 'sum'),
+sleep_data_by_day = sleep_data.groupby('creationDateTime').agg(
+    total_sleep_min=('time_asleep', 'sum'),
     bed_time=('startDateTime', 'min'), 
     wake_up_time=('endDateTime', 'max'), 
     sleep_counts=('creationDateTime','count'))
@@ -128,7 +130,7 @@ respiratoryRate.sample(5)
 respiratoryRate_by_date = respiratoryRate.groupby("creation_date").agg(
     respiratory_rate_avg=("value", "mean"),
     respiratory_rate_max=("value", "max"),
-    respiratory_rate_min=("value", "min")
+    respiratory_rate_minimum=("value", "min")
 ).reset_index()
 respiratoryRate_by_date = respiratoryRate_by_date.rename(columns={"creation_date": "date"})
 print(respiratoryRate_by_date.head())
@@ -152,6 +154,7 @@ handwashingEvent_by_day
 
 
 # %%
+df = pd.DataFrame()
 df = pd.merge(steps_by_date, restingHR_by_day, on="date", how="outer")
 df = pd.merge(df, vo2max_by_day, on="date", how="outer")
 df = pd.merge(df, sleep_data_by_day, on="date", how="outer")
@@ -159,6 +162,25 @@ df = pd.merge(df, activeEnergy_by_date, on="date", how="outer")
 df = pd.merge(df, basalEnergy_by_date, on="date", how="outer")
 df = pd.merge(df, respiratoryRate_by_date, on="date", how="outer")
 df = pd.merge(df, handwashingEvent_by_day, on="date", how="outer")
+df.head(10)
+
+
+# %% convert time deltas to minutes
+df["total_sleep_min"] = df["total_sleep_min"].dt.total_seconds()/60
+df["time_in_bed_min"] = df["time_in_bed_min"].dt.total_seconds()/60
+df["restless_sleep_min"] = df["restless_sleep_min"].dt.total_seconds()/60
+df["hand_washing_time_sec"] = df["hand_washing_time_sec"].dt.total_seconds()
+df.head(10)
+# %% drop first row due to false values
+df = df.drop([0]).reset_index(drop=True)
+# %% fill empty vo2 max values
+df["vo2_max"] = df["vo2_max"].fillna(-1)
+last_vo2max = np.nan
+for row in df.iterrows():
+    if row[1]["vo2_max"] > 0:
+        last_vo2max = row[1]["vo2_max"]
+    else:
+        df.loc[row[0], "vo2_max"] = last_vo2max
 df.head(10)
 
 
