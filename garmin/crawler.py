@@ -179,8 +179,9 @@ while start_date <= end_date:
 
     rhr = get_resting_heart_rate_bpm(driver)
     vo2_max, training_load = get_vo2_max_and_training_load(driver)
-    cal_rest, cal_activ = get_calories(driver)
-    total_sleep, deep_sleep, light_sleep, rem_sleep, awake_sleep = get_sleep_data(driver)
+    cal_rest, cal_active = get_calories(driver)
+    time_in_bed, deep_sleep, light_sleep, rem_sleep, awake_sleep = get_sleep_data(driver)
+    total_sleep = time_in_bed - awake_sleep
     low_intensity_min, high_intensity_min = get_intensity_minutes(driver)
     total_steps = get_steps(driver)
     stress_val, pause_min, low_stress_min, medium_stress_min, high_stress_min = get_stress_values(driver)
@@ -196,16 +197,16 @@ while start_date <= end_date:
         spo2_avg, spo2_min, avg_hr_sleep = get_SpO2_and_avg_hr(driver)
         bed_time, wake_time = get_bed_and_wakeup_times(driver)
 
-    data.append({"date": start_date, "rhr": rhr, "vo2_max": vo2_max, \
-        "training_load": training_load,  "cal_rest": cal_rest, "cal_activ": cal_activ, \
-        "total_sleep": total_sleep, "deep_sleep": deep_sleep, "light_sleep": light_sleep, \
-        "rem_sleep": rem_sleep, "awake_sleep": awake_sleep, "low_intensity_min": low_intensity_min, \
-        "high_intensity_min": high_intensity_min, "total_steps": total_steps, \
-        "stress_val": stress_val, "pause_min": pause_min, "low_stress_min": low_stress_min, \
+    data.append({"date": start_date, "resting_hr": rhr, "vo2_max": vo2_max, \
+        "training_load": training_load,  "calories_base": cal_rest, "calories_active": cal_active, \
+        "time_in_bed_min": time_in_bed, "total_sleep_min": total_sleep, "deep_sleep_min": deep_sleep, \
+        "light_sleep_min": light_sleep, "rem_sleep_min": rem_sleep, "restless_sleep_min": awake_sleep, \
+        "low_intensity_min": low_intensity_min, "high_intensity_min": high_intensity_min, "total_steps": total_steps, \
+        "stress_value": stress_val, "pause_min": pause_min, "low_stress_min": low_stress_min, \
         "medium_stress_min": medium_stress_min, "high_stress_min": high_stress_min, \
-        "body_bat_high": body_bat_high, "body_bat_low": body_bat_low, "spo2_avg": spo2_avg, \
-        "spo2_min": spo2_min, "avg_hr_sleep": avg_hr_sleep, "bed_time": bed_time, \
-        "wake_time": wake_time})
+        "body_battery_high": body_bat_high, "body_battery_low": body_bat_low, "oxygen_saturation_avg": spo2_avg, \
+        "oxygen_saturation_minimum": spo2_min, "avg_hr_sleep": avg_hr_sleep, "bed_time": bed_time, \
+        "wake_up_time": wake_time})
 
     start_date += delta
 
