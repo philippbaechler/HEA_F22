@@ -1,3 +1,4 @@
+# code inspired by: http://www.markwk.com/data-analysis-for-apple-health.html#:~:text=In%20order%20to%20get%20the,Email%20or%20any%20other%20method
 # %%
 from operator import index
 import pandas as pd
